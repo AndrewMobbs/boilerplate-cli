@@ -10,14 +10,17 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
-        "path/filepath"
+	"database/sql"
+	"log"
+	"path/filepath"
 
+	"github.com/AndrewMobbs/appdb"
 	"github.com/adrg/xdg"
 	"github.com/spf13/cobra"
 )
 
 var dataPath string
+var db *sql.DB
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
@@ -25,17 +28,29 @@ var initCmd = &cobra.Command{
 	Short: "Initialize application data",
 	Long:  `This command initialises whatever setup, such as a database, is needed for the application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		//dbPath, err := initializeStructures(args)
-		/* 		if err != nil {
-			log.Fatal(err)
-		} */
-		fmt.Println("Initialized DB at ", dataPath)
+		var err error
+		db, err = appdb.InitAppDB(dataPath, appName, 1, schema())
+		if err != nil {
+			log.Fatal("Error initialising database: ", err)
+		}
+		viperCfg.Set("database", dataPath)
+		err = viperCfg.WriteConfig()
+		if err != nil {
+			log.Fatal("Error writing config: ", err)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(initCmd)
+	initCmd.Flags().StringVarP(&dataPath, "database", "d", filepath.Join(xdg.DataHome, appName, appName+".db"), "Database file")
 
-	initCmd.Flags().StringVarP(&dataPath, "database", "d", filepath.Join(xdg.DataHome,appName,appName+".db"), "Database file")
+}
 
+func schema() []string {
+	return []string{
+		`CREATE TABLE id(
+			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+		`,
+	}
 }
