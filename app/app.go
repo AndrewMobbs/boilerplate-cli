@@ -26,7 +26,14 @@ func NewApp(appName string, databasePath string, viperCfg *viper.Viper, logger *
 		Logger:       logger,
 	}
 	if a.DatabasePath != "" {
-		a.db = NewAppDB(a.DatabasePath, appName)
+		exists := a.checkDBExists()
+		if exists {
+			a.db = NewAppDB(a.DatabasePath, appName)
+			err := a.db.Open()
+			if err != nil {
+				a.Logger.Fatal("Error opening app database : ", err)
+			}
+		}
 	}
 	return &a
 }
@@ -37,28 +44,31 @@ func (a *App) Init() error {
 	if a.db == nil {
 		a.db = NewAppDB(a.DatabasePath, a.AppName)
 	}
-	filestat, err := os.Stat(a.DatabasePath)
+	exists := a.checkDBExists()
+	var err error
+	if exists {
+		err = a.db.Open()
+		a.Logger.Info("Using database at : ", a.DatabasePath)
+	} else {
+		err = a.db.Initialize()
+		a.Logger.Info("Created database at : ", a.DatabasePath)
+	}
+	return err
+}
 
+func (a *App) checkDBExists() bool {
+	filestat, err := os.Stat(a.DatabasePath)
 	exists := true
 	if err != nil {
 		if os.IsNotExist(err) {
 			exists = false
 		} else {
-			log.Fatal("Error statting Database file: ", err)
+			a.Logger.Fatal("Error statting Database file: ", err)
 		}
 	} else {
 		if !filestat.Mode().IsRegular() {
-			log.Fatal("Database file exists but isn't regular file.")
+			a.Logger.Fatal("Database file exists but isn't regular file.")
 		}
 	}
-
-	if exists {
-		err = a.db.Open()
-		a.Logger.Info("Using database : ", a.DatabasePath)
-	} else {
-		err = a.db.Initialize()
-		a.Logger.Info("Created database at : ", a.DatabasePath)
-	}
-
-	return err
+	return exists
 }
