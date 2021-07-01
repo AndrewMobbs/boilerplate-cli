@@ -12,10 +12,11 @@ package main
 import (
 	"github.com/AndrewMobbs/boilerplate-golang-cli/app"
 	"github.com/AndrewMobbs/boilerplate-golang-cli/cli"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
-// Set Defaults. appName is used to check database integrity
+// Set Defaults.
+// appName is used to check database integrity, set default paths and environment variable names.
 const (
 	appName           = "exampleApp"
 	defaultConfigName = "config.yaml"
@@ -34,6 +35,6 @@ func main() {
 	rootCmd := cli.RootCommand{App: a, DefaultConfigName: defaultConfigName, DefaultLogLevel: defaultLogLevel}
 	err := rootCmd.Command().Execute()
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 }
