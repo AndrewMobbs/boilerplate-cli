@@ -18,6 +18,6 @@ The framework includes a SQLite database for locally persisted application state
 
 Probably thousands of these on github, but this one is mine.
 
-Examples:
-`EXAMPLEAPP_FLAGPARAM=42 ./exampleapp example subcommand foo`
+Examples:  
+`EXAMPLEAPP_FLAGPARAM=42 ./exampleapp example subcommand foo`  
 `./exampleapp init --loglevel info`
