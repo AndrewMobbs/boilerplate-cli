@@ -1,7 +1,7 @@
 /*
 Copyright © 2021 Andrew Mobbs <andrew.mobbs@gmail.com>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, any person obtaining a copy of this software and associated documentation files (the "Software"), deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
@@ -15,6 +15,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Set Defaults. appName is used to check database integrity
 const (
 	appName           = "exampleApp"
 	defaultConfigName = "config.yaml"
@@ -28,6 +29,7 @@ const (
 // Format for Environment variables is APPNAME_PARAMETER (this does not work on persistent flags)
 func main() {
 	// execute root command (which cascades to subcommands)
+	// To add subcommands, edit each command, starting with root
 	a := app.NewApp(appName, "", nil, nil)
 	rootCmd := cli.RootCommand{App: a, DefaultConfigName: defaultConfigName, DefaultLogLevel: defaultLogLevel}
 	err := rootCmd.Command().Execute()

@@ -5,14 +5,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type SubCommand struct {
+type ExampleSubCommand struct {
 	App        *app.App
 	flagParam  int
 	fixedParam string
 }
 
 // An example subcommand with positional and flag arguments
-func (c *SubCommand) Command() *cobra.Command {
+func (c *ExampleSubCommand) Command() *cobra.Command {
 	subCmd := &cobra.Command{
 		Use:   "subcommand <string>",
 		Short: "A brief description of your command",
@@ -26,7 +26,7 @@ and usage of using your command. `,
 	}
 
 	// Add the flags here
-	subCmd.Flags().IntVarP(&c.flagParam, "flagparam", "f", 0, "Example parameter supplied by flag")
+	subCmd.Flags().IntVarP(&c.flagParam, "flagparam", "f", 5, "Example parameter supplied by flag")
 
 	// Add subcommands here.
 

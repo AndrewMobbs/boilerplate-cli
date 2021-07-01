@@ -14,6 +14,7 @@ type appDB struct {
 
 const schemaVersion uint8 = 1
 
+// schema returns the database schema. Golang doesn't provide const arrays/slices.
 func schema() []string {
 	return []string{
 		`CREATE TABLE id(
@@ -29,6 +30,7 @@ func NewAppDB(path string, appName string) *appDB {
 	}
 }
 
+// Open() opens the app database.
 func (s *appDB) Open() error {
 	var err error
 	if s.db == nil {
@@ -37,6 +39,7 @@ func (s *appDB) Open() error {
 	return err
 }
 
+// Initialize the database, deploying the schema
 func (s *appDB) Initialize() error {
 	db, err := appdb.InitAppDB(s.Path, s.AppName, schemaVersion, schema())
 	if err == nil {
