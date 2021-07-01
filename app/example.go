@@ -6,6 +6,7 @@ func (a *App) Example() error {
 	return nil
 }
 func (a *App) SubCommand(fixedParam string, flagParam int) error {
-	a.Logger.Warnf("Fixed param %s, flag param %d\n", fixedParam, flagParam)
+	a.Logger.Tracef("SubCommand(%s,%d)", fixedParam, flagParam)
+	a.Logger.Warn("Ran SubCommand")
 	return nil
 }

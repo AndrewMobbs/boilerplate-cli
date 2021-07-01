@@ -25,16 +25,18 @@ func (c *RootCommand) Command() *cobra.Command {
 
 	rootCmd := &cobra.Command{
 		Use:   c.App.AppName,
-		Short: "exampleApp",
-		Long:  `exampleApp is an example of a golang CLI driven application, with config and state database support.`,
+		Short: c.App.AppName,
+		Long:  c.App.AppName + ` is an example of a golang CLI driven application, with config and state database support.`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			l, err := log.ParseLevel(loglevel)
-			if err != nil {
-				log.Fatal("Invalid log level : ", loglevel)
-			}
-			c.App.Logger.SetLevel(l)
-			err = InitConfig(cmd, c.App, c.DefaultConfigName, cfgFile)
+			// set initial log level from command params.
+			logFlagSet := cmd.Flags().Changed("loglevel")
+			setLogLevel(c.App.Logger, loglevel)
+			err := InitConfig(cmd, c.App, c.DefaultConfigName, cfgFile)
 			c.App.DatabasePath = c.App.ViperCfg.GetString("database")
+			// loglevel might have changed from environment/config file. Try again.
+			if c.App.ViperCfg.GetString("loglevel") != "" && !logFlagSet {
+				setLogLevel(c.App.Logger, c.App.ViperCfg.GetString("loglevel"))
+			}
 			return err
 		},
 		//	Run: func(cmd *cobra.Command, args []string) {
@@ -52,6 +54,14 @@ func (c *RootCommand) Command() *cobra.Command {
 	rootCmd.AddCommand((&InitCommand{App: c.App}).Command())
 
 	return rootCmd
+}
+
+func setLogLevel(logger *log.Logger, level string) {
+	l, err := log.ParseLevel(level)
+	if err != nil {
+		logger.Fatal("Invalid log level : ", level)
+	}
+	logger.SetLevel(l)
 }
 
 // doPersistentFlags adds persistent flags (i.e. valid for all commands) to the root command
