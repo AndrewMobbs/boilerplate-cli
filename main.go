@@ -13,6 +13,7 @@ import (
 	"github.com/AndrewMobbs/boilerplate-golang-cli/app"
 	"github.com/AndrewMobbs/boilerplate-golang-cli/cli"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 // Set Defaults.
@@ -31,7 +32,7 @@ const (
 func main() {
 	// execute root command (which cascades to subcommands)
 	// To add subcommands, edit each command, starting with root
-	a := app.NewApp(appName, "", nil, nil)
+	a := app.NewApp(appName, "", viper.New(), log.New())
 	rootCmd := cli.RootCommand{App: a, DefaultConfigName: defaultConfigName, DefaultLogLevel: defaultLogLevel}
 	err := rootCmd.Command().Execute()
 	if err != nil {

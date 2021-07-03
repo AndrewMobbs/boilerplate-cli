@@ -8,7 +8,6 @@ import (
 	"github.com/adrg/xdg"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 type RootCommand struct {
@@ -18,8 +17,6 @@ type RootCommand struct {
 }
 
 func (c *RootCommand) Command() *cobra.Command {
-	c.App.Logger = log.New()
-	c.App.ViperCfg = viper.New()
 	cfgFile := ""
 	loglevel := ""
 
