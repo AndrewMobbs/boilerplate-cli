@@ -2,6 +2,7 @@ package app
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/AndrewMobbs/appdb"
 )
@@ -33,8 +34,11 @@ func NewAppDB(path string, appName string) *appDB {
 // Open() opens the app database.
 func (s *appDB) Open() error {
 	var err error
+	if s.Path == "" {
+		return fmt.Errorf("database not configured, run init command")
+	}
 	if s.db == nil {
-		s.db, err = appdb.OpenAppDB(s.Path, s.AppName, schemaVersion)
+		s.db, err = appdb.Open(s.Path, s.AppName, schemaVersion)
 	}
 	return err
 }

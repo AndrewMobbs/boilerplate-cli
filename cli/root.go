@@ -29,17 +29,26 @@ func (c *RootCommand) Command() *cobra.Command {
 			logFlagSet := cmd.Flags().Changed("loglevel")
 			setLogLevel(c.App.Logger, loglevel)
 			err := InitConfig(cmd, c.App, c.DefaultConfigName, cfgFile)
-			c.App.DatabasePath = c.App.ViperCfg.GetString("database")
+			// Open database connection if db has been configured
+			if err == nil {
+				c.App.DatabasePath = c.App.ViperCfg.GetString("database")
+				if c.App.DatabasePath != "" {
+					err = c.App.OpenAppDB()
+				}
+			}
 			// loglevel might have changed from environment/config file. Try again.
 			if c.App.ViperCfg.GetString("loglevel") != "" && !logFlagSet {
 				setLogLevel(c.App.Logger, c.App.ViperCfg.GetString("loglevel"))
 			}
 			return err
 		},
-		//	Run: func(cmd *cobra.Command, args []string) {
-		// Working with OutOrStdout/OutOrStderr allows us to unit test our command easier
-		//	cmd.OutOrStdout()
-		//	},
+		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
+			err := c.App.Close()
+			if err != nil {
+				c.App.Logger.Warn("error in tidy-up : ", err)
+			}
+			return err
+		},
 	}
 	// Add app-wide persistent flags
 	doPersistentFlags(rootCmd, c.App, c.DefaultConfigName, c.DefaultLogLevel, &cfgFile, &loglevel)

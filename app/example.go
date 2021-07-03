@@ -2,6 +2,8 @@ package app
 
 // The logic for the "example" command, separated from CLI plumbing
 func (a *App) Example() error {
+	a.Logger.Trace("Example()")
+
 	a.Logger.Info("Ran example command")
 	return nil
 }
