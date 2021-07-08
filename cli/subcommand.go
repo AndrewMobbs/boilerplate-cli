@@ -19,6 +19,9 @@ type EnumParam struct {
 }
 
 func (a *EnumParam) String() string {
+	if a.action == "" {
+		a.action = app.EnumParamFoo
+	}
 	return a.action
 }
 
@@ -33,9 +36,9 @@ func (a *EnumParam) Set(s string) error {
 		app.EnumParamBaz:
 		a.action = s
 		return nil
-	case "": // Default value
-		a.action = app.EnumParamFoo
-		return nil
+		//	case "": // Default value
+		//		a.action = app.EnumParamFoo
+		//		return nil
 	}
 	return os.ErrInvalid
 }
@@ -59,7 +62,6 @@ and usage of using your command. `,
 	// Add the flags here
 	subCmd.Flags().IntVarP(&c.flagParam, "flag-param", "f", 5, "Example parameter supplied by flag")
 	subCmd.Flags().VarP(&enumParam, "enum-param", "e", "Parameter with constrained valid values; foo|bar|baz (default foo)")
-
 	// Add subcommands here.
 
 	return subCmd

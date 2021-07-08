@@ -6,6 +6,8 @@ Configuration is managed parameters from command-line, config file and environme
 
 Environment variables are automatically bound to Viper config strings with naming system APPNAME_PARAMETERNAME (e.g. EXAMPLEAPP_FLAGPARAM).
 
+Also includes an example implementation of a Cobra flag with [restricted valid values](https://github.com/spf13/pflag/issues/236) (Enum-like). This is just included so I don't have to work out how to do it again.
+
 This framework will create persistent filesystem objects. An empty config file and directory structure are automatically created in a location specified by the --config flag, which defaults to `$XDG_CONFIG_HOME/appName/config.yaml` with `$XDG_CONFIG_HOME` defaulting to `~/.config`.
 
 Commands and subcommands are managed through [cobra](https://github.com/spf13/cobra). Instead of the default cobra approach of package global variables, this builds a set of command methods. Building the command and subcommand tree is left as a manual exercise but is fairly straightforward, examples are given. Do not try using the cobra CLI!
