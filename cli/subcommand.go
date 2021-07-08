@@ -20,7 +20,7 @@ type EnumParam struct {
 
 func (a *EnumParam) String() string {
 	if a.action == "" {
-		a.action = app.EnumParamFoo
+		a.action = app.EnumParamFoo // Set default value
 	}
 	return a.action
 }
@@ -36,9 +36,6 @@ func (a *EnumParam) Set(s string) error {
 		app.EnumParamBaz:
 		a.action = s
 		return nil
-		//	case "": // Default value
-		//		a.action = app.EnumParamFoo
-		//		return nil
 	}
 	return os.ErrInvalid
 }
