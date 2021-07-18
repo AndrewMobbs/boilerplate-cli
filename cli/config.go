@@ -102,6 +102,8 @@ func bindFlags(cmd *cobra.Command, v *viper.Viper, appName string) {
 		if !f.Changed && v.IsSet(f.Name) {
 			val := v.Get(f.Name)
 			cmd.Flags().Set(f.Name, fmt.Sprintf("%v", val))
+		} else {
+			v.BindPFlag(f.Name, f)
 		}
 	})
 }

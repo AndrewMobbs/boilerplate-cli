@@ -28,6 +28,7 @@ func (c *RootCommand) Command() *cobra.Command {
 			// set initial log level from command params.
 			logFlagSet := cmd.Flags().Changed("loglevel")
 			setLogLevel(c.App.Logger, loglevel)
+			// Bind env vars and config variables to pflags and vice-versa
 			err := InitConfig(cmd, c.App, c.DefaultConfigName, cfgFile)
 			// Open database connection if db has been configured
 			if err == nil {

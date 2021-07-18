@@ -9,20 +9,20 @@ import (
 
 type ExampleSubCommand struct {
 	App        *app.App
-	flagParam  int
-	fixedParam string
 	enumParam  string
+	fixedParam string
 }
 
+// Example implementation of an "enum" style parameter with limited valid values
 type EnumParam struct {
-	action string
+	value string
 }
 
 func (a *EnumParam) String() string {
-	if a.action == "" {
-		a.action = app.EnumParamFoo // Set default value
+	if a.value == "" {
+		a.value = app.EnumParamFoo // Set default value
 	}
-	return a.action
+	return a.value
 }
 
 func (a *EnumParam) Type() string {
@@ -34,7 +34,7 @@ func (a *EnumParam) Set(s string) error {
 	case app.EnumParamFoo,
 		app.EnumParamBar,
 		app.EnumParamBaz:
-		a.action = s
+		a.value = s
 		return nil
 	}
 	return os.ErrInvalid
@@ -43,6 +43,8 @@ func (a *EnumParam) Set(s string) error {
 // An example subcommand with positional and flag arguments
 func (c *ExampleSubCommand) Command() *cobra.Command {
 	var enumParam EnumParam
+	var flagParam int
+
 	subCmd := &cobra.Command{
 		Use:   "subcommand <string>",
 		Short: "A brief description of your command",
@@ -51,13 +53,13 @@ and usage of using your command. `,
 		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			c.fixedParam = args[0]
-			c.enumParam = enumParam.action
-			c.App.SubCommand(c.fixedParam, c.flagParam, c.enumParam)
+			c.enumParam = enumParam.value
+			c.App.SubCommand(c.fixedParam, c.enumParam)
 		},
 	}
 
 	// Add the flags here
-	subCmd.Flags().IntVarP(&c.flagParam, "flag-param", "f", 5, "Example parameter supplied by flag")
+	subCmd.Flags().IntVarP(&flagParam, "flag-param", "f", 5, "Example parameter supplied by flag")
 	subCmd.Flags().VarP(&enumParam, "enum-param", "e", "Parameter with constrained valid values; foo|bar|baz (default foo)")
 	// Add subcommands here.
 

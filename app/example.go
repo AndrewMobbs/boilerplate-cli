@@ -1,5 +1,9 @@
 package app
 
+import (
+	"fmt"
+)
+
 const (
 	EnumParamFoo = "foo"
 	EnumParamBar = "bar"
@@ -12,8 +16,9 @@ func (a *App) Example() error {
 	a.Logger.Info("Ran example command")
 	return nil
 }
-func (a *App) SubCommand(fixedParam string, flagParam int, enumParam string) error {
-	a.Logger.Tracef("SubCommand(%s,%d,%s)", fixedParam, flagParam, enumParam)
+func (a *App) SubCommand(fixedParam string, enumParam string) error {
+	a.Logger.Tracef("SubCommand(%s,%s)", fixedParam, enumParam)
+	fmt.Printf("flag-param is %d\nenum-param is %s\n", a.ViperCfg.GetInt("flag-param"), enumParam)
 	a.Logger.Warn("Ran SubCommand")
 	return nil
 }
