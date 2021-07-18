@@ -84,16 +84,19 @@ func InitConfig(cmd *cobra.Command, a *app.App, defaultConfigName string, cfgFil
 	// If a config file is found, read it in.
 	if err := a.ViperCfg.ReadInConfig(); err == nil {
 		a.Logger.Info("Using config file : ", a.ViperCfg.ConfigFileUsed())
+	} else {
+		return err
 	}
-
 	a.ViperCfg.SetEnvPrefix(a.AppName) // read in environment variables that match
 	a.ViperCfg.AutomaticEnv()
-	bindFlags(cmd, a.ViperCfg, a.AppName)
+	err := bindFlags(cmd, a.ViperCfg, a.AppName)
 
-	return nil
+	return err
 }
 
-func bindFlags(cmd *cobra.Command, v *viper.Viper, appName string) {
+func bindFlags(cmd *cobra.Command, v *viper.Viper, appName string) error {
+	var e error
+	e = nil
 	cmd.Flags().VisitAll(func(f *pflag.Flag) {
 		if strings.Contains(f.Name, "-") {
 			envVarSuffix := strings.ToUpper(strings.ReplaceAll(f.Name, "-", "_"))
@@ -101,9 +104,16 @@ func bindFlags(cmd *cobra.Command, v *viper.Viper, appName string) {
 		}
 		if !f.Changed && v.IsSet(f.Name) {
 			val := v.Get(f.Name)
-			cmd.Flags().Set(f.Name, fmt.Sprintf("%v", val))
+			err := cmd.Flags().Set(f.Name, fmt.Sprintf("%v", val))
+			if err != nil {
+				e = err
+			}
 		} else {
-			v.BindPFlag(f.Name, f)
+			err := v.BindPFlag(f.Name, f)
+			if err != nil {
+				e = err
+			}
 		}
 	})
+	return e
 }
