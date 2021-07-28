@@ -3,6 +3,7 @@ package app
 import (
 	"database/sql"
 	"fmt"
+	"os"
 
 	"github.com/AndrewMobbs/appdb"
 )
@@ -57,4 +58,22 @@ func (s *appDB) Close() error {
 		return s.db.Close()
 	}
 	return nil
+}
+
+func (a *App) checkDBExists() bool {
+	a.Logger.Trace("App.checkDBExists()")
+	filestat, err := os.Stat(a.DatabasePath)
+	exists := true
+	if err != nil {
+		if os.IsNotExist(err) {
+			exists = false
+		} else {
+			a.Logger.Fatal("Error statting Database file: ", err)
+		}
+	} else {
+		if !filestat.Mode().IsRegular() {
+			a.Logger.Fatal("Database file exists but isn't regular file.")
+		}
+	}
+	return exists
 }

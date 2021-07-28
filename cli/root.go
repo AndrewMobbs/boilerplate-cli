@@ -33,7 +33,7 @@ func (c *RootCommand) Command() *cobra.Command {
 			// Open database connection if db has been configured
 			if err == nil {
 				c.App.DatabasePath = c.App.ViperCfg.GetString("database")
-				if c.App.DatabasePath != "" {
+				if c.App.DatabasePath != "" && cmd.Name() != "init" {
 					err = c.App.OpenAppDB()
 				}
 			}
