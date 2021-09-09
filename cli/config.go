@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -47,7 +48,7 @@ func InitConfig(cmd *cobra.Command, a *app.App, defaultConfigName string, cfgFil
 		configFilePath = cfgFile
 		filestat, err := os.Stat(cfgFile)
 		if err != nil {
-			if os.IsNotExist(err) {
+			if errors.Is(err, os.ErrNotExist) {
 				createConfigFile = true
 			} else {
 				a.Logger.Fatal("Error statting config file : ", err)

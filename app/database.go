@@ -2,6 +2,7 @@ package app
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 
@@ -65,7 +66,7 @@ func (a *App) checkDBExists() bool {
 	filestat, err := os.Stat(a.DatabasePath)
 	exists := true
 	if err != nil {
-		if os.IsNotExist(err) {
+		if errors.Is(err, os.ErrNotExist) {
 			exists = false
 		} else {
 			a.Logger.Fatal("Error statting Database file: ", err)
